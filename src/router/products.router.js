@@ -35,8 +35,25 @@ router.get("/:idProduct", async (req, res) => {
 
 // Agregar producto
 router.post("/", async (req, res) => {
-  const { title, description, price, thumbnail, code, stock } = req.body;
-  if (!title || !description || !price || !thumbnail || !code || !stock) {
+  const {
+    title,
+    description,
+    price,
+    category,
+    code,
+    stock,
+    thumbnail,
+    status,
+  } = req.body;
+  if (
+    !title ||
+    !description ||
+    !price ||
+    !category ||
+    !code ||
+    !stock ||
+    !status
+  ) {
     return res.status(400).json({ menssage: "Some data is missing" });
   }
   try {

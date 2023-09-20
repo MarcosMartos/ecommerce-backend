@@ -41,9 +41,10 @@ class ProductManager {
         obj.title &&
         obj.description &&
         obj.price &&
-        obj.thumbnail &&
         obj.code &&
-        obj.stock
+        obj.stock &&
+        obj.status &&
+        obj.category
       ) {
         // Llamar productos
 
@@ -136,6 +137,8 @@ class ProductManager {
           thumbnail: obj.thumbnail ? obj.thumbnail : product.thumbnail,
           code: obj.code ? obj.code : product.code,
           stock: obj.stock ? obj.stock : product.stock,
+          category: obj.category ? obj.category : product.category,
+          status: obj.status ? obj.status : product.status,
         };
         products[index] = product;
         await fs.promises.writeFile(this.path, JSON.stringify(products));
