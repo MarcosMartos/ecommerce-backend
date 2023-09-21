@@ -23,30 +23,29 @@ class Carts {
     }
   }
 
-  // Crear método postCart
-  async addCart(products) {
+  // Crear método addCart
+  async addCart() {
     try {
       // Llamar carritos
 
       const carts = await this.getCarts();
 
-      if (id) {
-        id = products[products.length - 1].id + 1;
+      // Identificador único
+
+      let idCart;
+
+      if (carts.length == 0) {
+        idCart = 1;
       } else {
-        id = 1;
+        idCart = carts[carts.length - 1].id + 1;
       }
 
-      //   if (!products) {
-      //     const products =
-      //     const newCart = {id, }
-      //   } else {
-      //     //Cargar nuevo carrito al array
+      // Crear carrito
 
-      //     const newCart = { id, ...obj };
-      //     products.push(newCart);
-      //     await fs.promises.writeFile(this.path, JSON.stringify(products));
-      //     return newCart;
-      //   }
+      const newCart = { id: idCart, products: [] };
+      carts.push(newCart);
+      await fs.promises.writeFile(this.path, JSON.stringify(carts));
+      return newCart;
     } catch (error) {
       return error;
     }
@@ -57,4 +56,4 @@ class Carts {
 
 export const carts = new Carts("Carts.json");
 
-// carts.getCarts();
+carts.addCart();
