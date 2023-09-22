@@ -1,32 +1,52 @@
 import { Router } from "express";
+import { carrito } from "../carts.js";
 
 const router = Router();
 
 // Todos los productos
-router.post("/", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const products = await productsManager.getProducts(req.query);
+    const carts = await carrito.getCarts();
 
-    if (!products.length) {
-      res.status(200).json({ menssage: "No products found" });
+    if (!carts.length) {
+      res.status(200).json({ menssage: "No carts found" });
     } else {
-      res.status(200).json({ menssage: "Products found", products });
+      res.status(200).json({ menssage: "Carts found", carts });
     }
   } catch (error) {
     res.status(500).json({ menssage: error });
   }
 });
 
-// Productos por id
-router.get("/:idProduct", async (req, res) => {
-  const { idProduct } = req.params;
+// Crear carrito
+router.post("/", async (req, res) => {
   try {
-    const product = await productsManager.getProductById(parseInt(idProduct));
-    if (!product) {
-      res.status(400).json({ menssage: "Product not found with the id sent" });
+    const newCart = await carrito.addCart();
+    res.status(200).json({ menssage: "Cart created", cart: newCart });
+  } catch (error) {
+    res.status(500).json({ menssage: error });
+  }
+});
+
+// Carrito por id
+router.get("/:idCart", async (req, res) => {
+  const { idCart } = req.params;
+  try {
+    const cart = await carrito.getCartById(+idCart);
+    if (!cart) {
+      res.status(400).json({ menssage: "Cart not found with the id sent" });
     } else {
-      res.status(200).json({ menssage: "Product found", product });
+      res.status(200).json({ menssage: "Cart found", cart });
     }
+  } catch (error) {
+    res.status(500).json({ menssage: error });
+  }
+});
+
+// Agregar producto al carrito
+router.post("/:idCart/product/:idProduct", async (req, res) => {
+  const { idCart, idProduct } = req.params;
+  try {
   } catch (error) {
     res.status(500).json({ menssage: error });
   }

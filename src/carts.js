@@ -7,14 +7,13 @@ class Carts {
     this.path = path;
   }
 
-  // Traer json de Cart
+  // Mostrar todos los carritos
   async getCarts() {
     // Verificamos si existe contenido en el path
     if (fs.existsSync(this.path)) {
       //  Leemos, parseamos y retornamos
       const info = await fs.promises.readFile(this.path, "utf-8");
       const infoParsed = JSON.parse(info);
-      console.log(infoParsed);
 
       return infoParsed;
     } else {
@@ -23,7 +22,7 @@ class Carts {
     }
   }
 
-  // Crear método addCart
+  // Agregar un carrito
   async addCart() {
     try {
       // Llamar carritos
@@ -50,10 +49,62 @@ class Carts {
       return error;
     }
   }
+
+  // Mostrar productos de un carrito por id
+  async getCartById(idCart) {
+    try {
+      const carts = await this.getCarts();
+      const cart = carts.find((c) => c.id === idCart);
+      return cart.products;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Agregar un producto a un carrito
+
+  // async addProductToCart(idCart, idProduct) {
+  //   try {
+  //     // Buscar al carrito
+  //     const cart = this.getCartById(idCart);
+  //     // Crear producto
+
+  //     // CADA CARRITO TIENE PRODUCTOS INDIVIDUALES
+
+  //     // const isExist = cart.product.find((p)=>p.id === idProduct);
+  //     // if(isExist){
+  //     //   const newProduct = {
+  //     //     product: {...cart.product};
+  //     //     qu
+  //     //   }
+  //     // }
+
+  //     const newProduct = {
+  //       product: {idProduct, ...cart.product};
+  //       quantity:
+  //     }
+  //   } catch (error) {
+  //     return error;
+  //   }
+  // }
+
+  // async addProductToCart(idCart, producto) {
+  //   const {product, quantity} = product;
+  //  try {
+  //   const cart = await this.getCartById(idCart);
+  //   if (!cart) {
+  //     return -1;
+  //   }else{
+  //     cart.products = {}
+  //   }
+  // }
+  //  } catch (error) {
+  //   return error;
+  //  }
 }
 
 //************************************ Primera Entrega ********************************* */
 
-export const carts = new Carts("Carts.json");
+export const carrito = new Carts("Carts.json");
 
-carts.addCart();
+// carrito.addProductToCart();
