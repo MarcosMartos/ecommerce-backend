@@ -33,10 +33,11 @@ router.get("/:idCart", async (req, res) => {
   const { idCart } = req.params;
   try {
     const cart = await carrito.getCartById(+idCart);
+    const { products } = cart;
     if (!cart) {
       res.status(400).json({ menssage: "Cart not found with the id sent" });
     } else {
-      res.status(200).json({ menssage: "Cart found", cart });
+      res.status(200).json({ menssage: "Cart found", products });
     }
   } catch (error) {
     res.status(500).json({ menssage: error });

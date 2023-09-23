@@ -55,7 +55,7 @@ class Carts {
     try {
       const carts = await this.getCarts();
       const cart = carts.find((c) => c.id === idCart);
-      return cart.products;
+      return cart;
     } catch (error) {
       return error;
     }
@@ -63,48 +63,44 @@ class Carts {
 
   // Agregar un producto a un carrito
 
-  // async addProductToCart(idCart, idProduct) {
-  //   try {
-  //     // Buscar al carrito
-  //     const cart = this.getCartById(idCart);
-  //     // Crear producto
+  async addProductToCart(idCart, idProduct) {
+    try {
+      //Buscar todos los carritos
+      const carts = await this.getCarts();
+      // Buscar al carrito
+      const cart = await this.getCartById(idCart);
 
-  //     // CADA CARRITO TIENE PRODUCTOS INDIVIDUALES
+      // buscamos si existe el producto
+      let productIndex = cart.products.findIndex(
+        (p) => p.product === idProduct
+      );
 
-  //     // const isExist = cart.product.find((p)=>p.id === idProduct);
-  //     // if(isExist){
-  //     //   const newProduct = {
-  //     //     product: {...cart.product};
-  //     //     qu
-  //     //   }
-  //     // }
+      // agregamos objeto si no existe, sino sumamos quantity
+      if (productIndex === -1) {
+        cart.products.push({
+          product: idProduct,
+          quantity: 1,
+        });
+      } else {
+        cart.products[productIndex].quantity += 1;
+      }
 
-  //     const newProduct = {
-  //       product: {idProduct, ...cart.product};
-  //       quantity:
-  //     }
-  //   } catch (error) {
-  //     return error;
-  //   }
-  // }
+      // buscamos carrito a cambiar
+      const cartIndex = carts.findIndex((cart) => cart.id === idCart);
+      carts[cartIndex] = cart;
 
-  // async addProductToCart(idCart, producto) {
-  //   const {product, quantity} = product;
-  //  try {
-  //   const cart = await this.getCartById(idCart);
-  //   if (!cart) {
-  //     return -1;
-  //   }else{
-  //     cart.products = {}
-  //   }
-  // }
-  //  } catch (error) {
-  //   return error;
-  //  }
+      // sobreescribimos carts.json
+      await fs.promises.writeFile(this.path, JSON.stringify(carts));
+    } catch (error) {
+      return error;
+    }
+  }
 }
 
 //************************************ Primera Entrega ********************************* */
 
 export const carrito = new Carts("Carts.json");
 
-// carrito.addProductToCart();
+// carrito.addCart();
+// carrito.getCartById(1);
+carrito.addProductToCart(2, 3);
