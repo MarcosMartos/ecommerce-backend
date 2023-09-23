@@ -26,11 +26,9 @@ class Carts {
   async addCart() {
     try {
       // Llamar carritos
-
       const carts = await this.getCarts();
 
       // Identificador único
-
       let idCart;
 
       if (carts.length == 0) {
@@ -40,7 +38,6 @@ class Carts {
       }
 
       // Crear carrito
-
       const newCart = { id: idCart, products: [] };
       carts.push(newCart);
       await fs.promises.writeFile(this.path, JSON.stringify(carts));
@@ -103,4 +100,4 @@ export const carrito = new Carts("Carts.json");
 
 // carrito.addCart();
 // carrito.getCartById(1);
-carrito.addProductToCart(2, 3);
+// carrito.addProductToCart(2, 3);

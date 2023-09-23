@@ -33,11 +33,10 @@ router.get("/:idCart", async (req, res) => {
   const { idCart } = req.params;
   try {
     const cart = await carrito.getCartById(+idCart);
-    const { products } = cart;
     if (!cart) {
       res.status(400).json({ menssage: "Cart not found with the id sent" });
     } else {
-      res.status(200).json({ menssage: "Cart found", products });
+      res.status(200).json({ menssage: "Cart found", cart });
     }
   } catch (error) {
     res.status(500).json({ menssage: error });
@@ -48,37 +47,9 @@ router.get("/:idCart", async (req, res) => {
 router.post("/:idCart/product/:idProduct", async (req, res) => {
   const { idCart, idProduct } = req.params;
   try {
-  } catch (error) {
-    res.status(500).json({ menssage: error });
-  }
-});
+    const cart = await carrito.addProductToCart(+idCart, +idProduct);
 
-// Agregar producto
-router.post("/", async (req, res) => {
-  const {
-    title,
-    description,
-    price,
-    category,
-    code,
-    stock,
-    thumbnail,
-    status,
-  } = req.body;
-  if (
-    !title ||
-    !description ||
-    !price ||
-    !category ||
-    !code ||
-    !stock ||
-    !status
-  ) {
-    return res.status(400).json({ menssage: "Some data is missing" });
-  }
-  try {
-    const newProduct = await productsManager.addProduct(req.body);
-    res.status(200).json({ menssage: "Product created", product: newProduct });
+    res.status(200).json({ menssage: "Product added to the Cart" });
   } catch (error) {
     res.status(500).json({ menssage: error });
   }
