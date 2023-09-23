@@ -4,7 +4,9 @@
     "title": "producto 1",
     "description": "este es un producto prueba 1",
     "price": 300,
-    "thumbnail": "sin imagen",
+    "thumbnail": [
+      "https://res.cloudinary.com/df4ghpsiz/image/upload/v1689170185/DZ6326_001_A_PREM_moaux0.jpg"
+    ],
     "code": "abc123",
     "stock": 30,
     "status": true,
@@ -15,7 +17,9 @@
     "title": "producto 2",
     "description": "este es un producto prueba 2",
     "price": 300,
-    "thumbnail": "sin imagen",
+    "thumbnail": [
+      "https://res.cloudinary.com/df4ghpsiz/image/upload/v1686667900/Zapatillas_Forum_Low_Gris_HQ7096_01_standard_ge6dth.jpg"
+    ],
     "code": "aaa111",
     "stock": 15,
     "status": true,
@@ -26,7 +30,9 @@
     "title": "producto 3",
     "description": "este es un producto prueba 3",
     "price": 400,
-    "thumbnail": "sin imagen",
+    "thumbnail": [
+      "https://res.cloudinary.com/df4ghpsiz/image/upload/v1686791000/Zapatillas_Znsored_Hi_Negro_GZ2293_01_standard_pqg1br.jpg"
+    ],
     "code": "abb345",
     "stock": 20,
     "status": true,
@@ -37,7 +43,9 @@
     "title": "producto 4",
     "description": "este es un producto prueba 4",
     "price": 500,
-    "thumbnail": "sin imagen",
+    "thumbnail": [
+      "https://res.cloudinary.com/df4ghpsiz/image/upload/v1686954742/Zapatillas_Duramo_SL_2.0_Negro_GW8336_01_standard_mjjvdn.jpg"
+    ],
     "code": "cab999",
     "stock": 25,
     "status": true,
@@ -48,7 +56,9 @@
     "title": "producto 5",
     "description": "este es un producto prueba 5",
     "price": 500,
-    "thumbnail": "sin imagen",
+    "thumbnail": [
+      "https://res.cloudinary.com/df4ghpsiz/image/upload/v1686954779/Zapatillas_Gamecourt_2.0_para_Tenis_Blanco_HQ8809_01_standard_b1xyot.jpg"
+    ],
     "code": "cnn777",
     "stock": 25,
     "status": true,
