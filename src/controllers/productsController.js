@@ -1,12 +1,26 @@
 import productManager from "../dao/DB/ProductManager.js";
+import cartManager from "../dao/DB/CartManager.js";
 
-async function getAllProducts(req, res, next) {
+async function getProducts(req, res, next) {
   try {
-    const { limit } = req.query;
+    const { query, limit, page, sort } = req.query;
 
-    const products = await productManager.getAll(limit);
+    const products = await productManager.getProducts(query, limit, page, sort);
 
-    res.status(200).json({ products: products });
+    products.status = products.payload.length > 0 ? "success" : "error";
+
+    delete products.totalDocs;
+    delete products.limit;
+    delete products.pagingCounter;
+
+    products.prevLink = products.hasPrevPage
+      ? `http://localhost:8080/api/products?page=${products.prevPage}`
+      : null;
+    products.nextLink = products.hasNextPage
+      ? `http://localhost:8080/api/products?page=${products.nextPage}`
+      : null;
+
+    res.status(200).json({ result: products });
   } catch (error) {
     next(error);
   }
@@ -70,6 +84,8 @@ async function deleteProductById(req, res, next) {
 
     const result = await productManager.deleteById(pid);
 
+    await cartManager.deleteProductFromCarts(pid);
+
     res.status(200).json({ message: result });
   } catch (error) {
     next(error);
@@ -78,7 +94,7 @@ async function deleteProductById(req, res, next) {
 
 export {
   addProduct,
-  getAllProducts,
+  getProducts,
   getProductById,
   updateProductById,
   deleteProductById,

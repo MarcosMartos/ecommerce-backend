@@ -6,9 +6,29 @@ class ProductManager extends Manager {
     super(product);
   }
 
-  async getAll(limit = 0) {
-    const foundObjects = this.model.find().limit(limit);
-    return foundObjects;
+  async getProducts(query, limit = 10, page = 1, sort = 0) {
+    const options = {
+      page: page,
+      limit: limit,
+      customLabels: {
+        docs: "payload",
+      },
+    };
+
+    if (+sort) {
+      options.sort = { price: +sort };
+    }
+
+    if (query) {
+      const foundObjects = await this.model.paginate(
+        JSON.parse(query),
+        options
+      );
+      return foundObjects;
+    } else {
+      const foundObjects = await this.model.paginate(query, options);
+      return foundObjects;
+    }
   }
 }
 

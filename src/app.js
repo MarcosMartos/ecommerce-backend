@@ -7,7 +7,6 @@ import { engine } from "express-handlebars";
 import { __dirname } from "./utils.js";
 import { Server } from "socket.io";
 import { getAllProductsHandler, messagesHandler } from "./handlers/handlers.js";
-// import configDB from "./config/configDB.js";
 import "./config/configDB.js";
 
 //Variables
@@ -27,7 +26,7 @@ app.use("/api/products", productRoute);
 app.use("/", viewsRoute);
 
 const httpServer = app.listen(8080, () => {
-  console.log(`Listening on port 8080`);
+  console.log(`Escuchando al puerto 8080`);
 });
 
 const socketServer = new Server(httpServer);

@@ -5,8 +5,13 @@ import mongoose from "mongoose";
 const cartSchema = new mongoose.Schema(
   {
     products: {
-      type: [{ productId: String, quantity: Number }],
-      require: true,
+      type: [
+        {
+          productId: { type: mongoose.Schema.Types.ObjectId, ref: "products" },
+          quantity: Number,
+        },
+      ],
+      required: true,
     },
   },
   {

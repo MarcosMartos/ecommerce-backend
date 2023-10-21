@@ -1,37 +1,35 @@
-const socketClient = io();
-let messages = [];
+let products = [];
 let error = "";
-const chat = document.getElementById("chat");
 
-socketClient.emit("getMessages");
+const productsList = document.getElementById("productsList");
 
-socketClient.on("newMessages", (_messages) => {
-  messages = [..._messages];
-  compileChat();
-});
+async function getAllProducts(url = "http://localhost:8080/api/products") {
+  try {
+    const response = await fetch(url);
+    const responseJson = await response.json();
 
-const messageForm = document.getElementById("messageForm");
+    products = [...responseJson.result.payload];
 
-messageForm.onsubmit = async (e) => {
-  e.preventDefault();
-
-  let newMessage = {
-    user: document.getElementById("email").value,
-    message: document.getElementById("message").value,
-  };
-
-  if (validMessage(newMessage)) {
-    socketClient.emit("messageSent", newMessage);
+    compileProducts();
+  } catch (err) {
+    error = err;
   }
-};
-
-function validMessage(_message) {
-  return _message.user && _message.message;
 }
 
-function compileChat() {
-  const chatTemplate = messages
-    .map((_message) => `<li>${_message.user}: ${_message.message}</li>`)
+function compileProducts() {
+  const productsTemplate = products
+    .map(
+      (product) => `<li>
+      <p>ID: ${product._id}</p> 
+      <p>Title: ${product.title}</p> 
+      <p>Description: ${product.description}</p> 
+      <p>Price: ${product.price}</p> 
+      <p>Code: ${product.code}</p> 
+      <p>Stock: ${product.stock}</p>
+    </li>`
+    )
     .join(" ");
-  chat.innerHTML = chatTemplate;
+  productsList.innerHTML = productsTemplate;
 }
+
+getAllProducts();

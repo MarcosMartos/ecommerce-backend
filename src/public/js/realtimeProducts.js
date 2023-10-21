@@ -66,8 +66,6 @@ async function addNewProduct(product) {
       body: JSON.stringify(product),
     });
 
-    console.log(await result.json());
-
     if (result) {
       socketClient.emit("getAllProducts");
     }
