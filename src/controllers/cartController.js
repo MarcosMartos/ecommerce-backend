@@ -89,6 +89,19 @@ async function updateProductsOfCart(req, res, next) {
     next(error);
   }
 }
+
+async function getCartOfActiveUser(req, res, next) {
+  try {
+    const id = req.user._id;
+
+    const result = await cartManager.getByFilter({ userId: id });
+
+    res.status(200).json({ message: result });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export {
   addProductToCartById,
   createCart,
@@ -97,4 +110,5 @@ export {
   deleteCart,
   updateProductOfCartById,
   updateProductsOfCart,
+  getCartOfActiveUser,
 };

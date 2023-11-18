@@ -45,7 +45,9 @@ class Manager {
 
   async updateById(id, object) {
     try {
-      const updatedObject = await this.model.findByIdAndUpdate(id, object);
+      const updatedObject = await this.model.findByIdAndUpdate(id, object, {
+        new: true,
+      });
 
       return updatedObject;
     } catch (error) {

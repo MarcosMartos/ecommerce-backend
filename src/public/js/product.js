@@ -4,6 +4,7 @@ let foundProduct;
 const productContainer = document.getElementById("productContainer");
 const addCartForm = document.getElementById("addCartForm");
 const quantity = document.getElementById("quantity");
+let cartId = "";
 addCartForm.onsubmit = async (e) => {
   e.preventDefault();
 
@@ -32,7 +33,7 @@ async function getProduct() {
 async function addProductToCart(_productId, _quantity) {
   try {
     const result = await fetch(
-      `http://localhost:8080/api/carts/652ec71d9979b1abeaab9b8d/products/${_productId}`,
+      `http://localhost:8080/api/carts/${cartId}/products/${_productId}`,
       {
         method: "POST",
         headers: {
@@ -44,6 +45,17 @@ async function addProductToCart(_productId, _quantity) {
     if (result) {
       alert("Producto añadido al carrito: 652ec71d9979b1abeaab9b8d");
     }
+  } catch (err) {
+    alert(`Error: ${err}`);
+  }
+}
+
+async function getCartOfUser(url = "http://localhost:8080/api/carts") {
+  try {
+    const response = await fetch(url);
+    const responseJson = await response.json();
+
+    cartId = `${responseJson.message._id}`;
   } catch (err) {
     alert(`Error: ${err}`);
   }
@@ -61,3 +73,4 @@ function compileProduct() {
 }
 
 getProduct();
+getCartOfUser();

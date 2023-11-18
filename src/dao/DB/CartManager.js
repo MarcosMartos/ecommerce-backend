@@ -11,7 +11,7 @@ class CartManager extends Manager {
       const foundCart = await this.model.findById(cartId);
 
       if (!foundCart) {
-        throw new Error("Cart no funciona");
+        throw new Error("Carrito no funciona");
       }
 
       const foundProduct = foundCart.products.find(
@@ -54,7 +54,7 @@ class CartManager extends Manager {
       const foundCart = await this.model.findById(cartId);
 
       if (!foundCart) {
-        throw new Error("Cart no funciona");
+        throw new Error("Carrito no funciona");
       }
 
       foundCart.products = foundCart.products.filter(
@@ -74,7 +74,7 @@ class CartManager extends Manager {
       const foundCart = await this.model.findById(cartId);
 
       if (!foundCart) {
-        throw new Error("Carrito eliminado");
+        throw new Error("Carrito no funciona");
       }
 
       foundCart.products = [];
@@ -103,7 +103,7 @@ class CartManager extends Manager {
       const foundCart = await this.model.findById(cartId);
 
       if (!foundCart) {
-        throw new Error("Cart no funciona");
+        throw new Error("Carrito no funciona");
       }
 
       const foundProduct = foundCart.products.find(

@@ -44,14 +44,14 @@ updateProductForm.onsubmit = async (e) => {
   let updateProductPrice = {
     price: document.getElementById("updateProductPrice").value,
   };
-  if (updateProductPrice.price !== 0 && updateProductId.value !== 0) {
+  if (updateProductPrice.price !== 0 && updateProductId.value !== "") {
     await updateProduct(updateProductId.value, updateProductPrice);
   }
 };
 
 deleteForm.onsubmit = async (e) => {
   e.preventDefault();
-  if (deleteProductId.value !== 0) {
+  if (deleteProductId.value !== "") {
     await deleteProduct(deleteProductId.value);
   }
 };

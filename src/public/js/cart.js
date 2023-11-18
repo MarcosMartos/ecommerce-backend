@@ -3,6 +3,32 @@ let error = "";
 const cart = document.getElementById("cart");
 const cartId = cart.innerText.replace("Cart: ", "");
 const productsList = document.getElementById("productsList");
+const deleteForm = document.getElementById("deleteForm");
+let deleteProductId = document.getElementById("deleteProductId");
+
+deleteForm.onsubmit = async (e) => {
+  e.preventDefault();
+  if (deleteProductId.value !== "") {
+    await deleteProductFromCart(deleteProductId.value);
+  }
+};
+
+async function deleteProductFromCart(idProduct) {
+  try {
+    const result = await fetch(
+      `http://localhost:8080/api/carts/${cartId}/products/${idProduct}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (result) {
+      await getAllProducts();
+    }
+  } catch (err) {
+    error = err;
+  }
+}
 
 async function getAllProducts() {
   try {

@@ -3,8 +3,8 @@ import messageManager from "../dao/DB/MessageManager.js";
 
 async function getAllProductsHandler(io, socket) {
   socket.on("getAllProducts", async () => {
-    const products = await productManager.getAll();
-    io.sockets.emit("updatedProducts", products);
+    const products = await productManager.getProducts();
+    io.sockets.emit("updatedProducts", products.payload);
   });
 }
 

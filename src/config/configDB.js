@@ -1,9 +1,26 @@
 import mongoose from "mongoose";
+import config from "./config.js";
 
-const URI =
-  "mongodb+srv://marcosmartos:Escandinava@cluster0.4uhpvlo.mongodb.net/ecommerce?retryWrites=true&w=majority";
+const URI = config.mongo_uri;
 
-mongoose
-  .connect(URI)
-  .then(() => console.log("DB is connected"))
-  .catch((err) => console.log(err));
+//config
+mongoose.set("strictQuery", true);
+
+//methods
+/**
+ * Establish connection with database with uri as enviroment variable DATABASE_URI
+ * @throws {Error} - If cannot connects with database throws an error.
+ */
+async function configDB() {
+  await mongoose
+    .connect(URI)
+    .then((res) => {
+      console.log("Conectado a DB");
+    })
+    .catch((err) => {
+      throw new Error(`La conexion fallo, ERROR: ${err.message}`);
+    });
+}
+
+//exports
+export default configDB;
