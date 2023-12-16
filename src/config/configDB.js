@@ -1,13 +1,12 @@
 import { Sequelize } from "sequelize";
 import { errors } from "../utils/errorDictionary.js";
-import { config } from "./config.js";
 
 export class Database {
   static instanceDatabase;
 
   static getInstanceDatabase(database = Sequelize) {
     if (!this.instanceDatabase) {
-      this.instanceDatabase = new database(config.mongo_uri);
+      this.instanceDatabase = new database(process.env.MONGO_URI);
     }
 
     return this.instanceDatabase;

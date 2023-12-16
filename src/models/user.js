@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { Database } from "../config/database.connection.js";
+import { Database } from "../config/configDB.js";
 import { deleteImageInCloud } from "../middlewares/uploadImages.middleware.js";
 import { Rating } from "./rating.js";
 import { Message } from "./message.js";

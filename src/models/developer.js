@@ -1,6 +1,6 @@
 import { Product } from "./product.js";
 import { DataTypes } from "sequelize";
-import { Database } from "../config/database.connection.js";
+import { Database } from "../config/configDB.js";
 import { deleteImageInCloud } from "../middlewares/uploadImages.middleware.js";
 
 const instanceDatabase = Database.getInstanceDatabase();

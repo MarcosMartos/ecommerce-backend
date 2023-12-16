@@ -1,4 +1,4 @@
-import ProductDao from "../dao/DBSystem/Product.dao.js";
+import ProductDao from "../dao/DB/Product.dao.js";
 import BaseService from "./base.service.js";
 import { deleteImageInCloud } from "../middlewares/uploadImages.middleware.js";
 import { Category } from "../models/category.js";

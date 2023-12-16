@@ -1,4 +1,4 @@
-import CategoryDao from "../dao/DBSystem/Category.dao.js";
+import CategoryDao from "../dao/DB/Category.dao.js";
 import { errors } from "../utils/errorDictionary.js";
 import BaseService from "./base.service.js";
 import ProductService from "./Product.service.js";

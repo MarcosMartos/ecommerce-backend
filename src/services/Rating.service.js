@@ -1,5 +1,5 @@
 import BaseService from "./base.service.js";
-import RatingDao from "../dao/DBSystem/Rating.dao.js";
+import RatingDao from "../dao/DB/Rating.dao.js";
 import { Op } from "sequelize";
 
 class RatingService extends BaseService {

@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { Database } from "../config/database.connection.js";
+import { Database } from "../config/configDB.js";
 import { Developer } from "./developer.js";
 import { Category } from "./category.js";
 import { Cart } from "./cart.js";
