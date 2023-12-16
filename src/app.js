@@ -5,19 +5,27 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import productRoute from "./routes/productsRoute.js";
-import cartRoute from "./routes/cartRoute.js";
-import sessionRoute from "./routes/sessionRoute.js";
-import userRoute from "./routes/userRoute.js";
-import viewsRoute from "./routes/viewsRoute.js";
-import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware.js";
+import productRoute from "./routes/product.routes.js";
+import cartRoute from "./routes/cart.routes.js";
+import sessionRoute from "./routes/session.routes.js";
+import userRoute from "./routes/user.routes.js";
+import ratingRoute from "./routes/rating.routes.js";
+import developerRoute from "./routes/developer.routes.js";
+import viewsRoute from "./routes/views.routes.js";
+import categoryRoute from "./routes/category.routes.js";
+import errorHandlerMiddleware from "./middlewares/error.middleware.js";
 import { engine } from "express-handlebars";
-import { __dirname } from "./utils.js";
+import { __dirname } from "./utils/utils.js";
 import { Server } from "socket.io";
-import { getAllProductsHandler, messagesHandler } from "./handlers/handlers.js";
+import {
+  getAllProductsHandler,
+  messagesHandler,
+  getRandomBuy,
+  getAllCategoriesHandler,
+  getAllDevelopersHandler,
+} from "./handlers/handlers.js";
+import { Database } from "./config/configDB.js";
 import passport from "passport";
-import config from "./config/config.js";
-import configDB from "./config/configDB.js";
 
 //Variables
 const app = express();
@@ -38,7 +46,7 @@ app.use(
     saveUninitialized: false,
     cookie: { maxAge: 60 * 60 * 1000 },
     store: MongoStore.create({
-      mongoUrl: config.mongo_uri,
+      mongoUrl: process.env.MONGO_URI,
       mongoOptions: {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -55,14 +63,18 @@ app.use("/api/carts", cartRoute);
 app.use("/api/products", productRoute);
 app.use("/api/sessions", sessionRoute);
 app.use("/api/users", userRoute);
+app.use("/api/ratings", ratingRoute);
+app.use("/api/categories", categoryRoute);
+app.use("/api/developers", developerRoute);
 app.use("/", viewsRoute);
 
 //Global middlewares
 app.use(errorHandlerMiddleware);
 
-const httpServer = app.listen(8080, () => {
-  console.log(`Escuchando al puerto 8080`);
-  configDB();
+//Servers
+const httpServer = app.listen(8080, async () => {
+  await Database.databaseConnection();
+  console.log(`Escuchando el puerto 8080`);
 });
 
 const socketServer = new Server(httpServer);
@@ -70,6 +82,11 @@ const socketServer = new Server(httpServer);
 const onConnection = async (socket) => {
   await getAllProductsHandler(socketServer, socket);
   await messagesHandler(socketServer, socket);
+  await getRandomBuy(socketServer, socket);
+  await getAllCategoriesHandler(socketServer, socket);
+  await getAllDevelopersHandler(socketServer, socket);
 };
 
 socketServer.on("connection", onConnection);
+
+export default app;

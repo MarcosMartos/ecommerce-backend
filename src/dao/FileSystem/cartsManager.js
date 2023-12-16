@@ -16,10 +16,10 @@ class CartManager {
       const result = await fs.promises
         .writeFile(this.path, JSON.stringify(carts))
         .then(() => {
-          return "Cart added";
+          return "Carrito agregado";
         })
         .catch((err) => {
-          throw new Error("Cart could not be added");
+          throw new Error("No se pudo agregar el carrito");
         });
 
       return result;
@@ -98,10 +98,10 @@ class CartManager {
       const result = await fs.promises
         .writeFile(this.path, JSON.stringify(carts))
         .then(() => {
-          return "Product added";
+          return "Producto agregado";
         })
         .catch((err) => {
-          throw new Error("Product could not be added");
+          throw new Error("No se pudo agregar el producto");
         });
 
       return result;

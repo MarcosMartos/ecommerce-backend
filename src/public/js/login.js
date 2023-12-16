@@ -1,4 +1,9 @@
 const loginForm = document.getElementById("loginForm");
+const back = document.getElementById("back");
+
+back.onclick = (e) => {
+  window.history.back();
+};
 
 loginForm.onsubmit = async (e) => {
   e.preventDefault();
@@ -6,6 +11,7 @@ loginForm.onsubmit = async (e) => {
     email: document.getElementById("email").value,
     password: document.getElementById("password").value,
   };
+
   await login(user);
 };
 
@@ -13,28 +19,27 @@ async function login(user) {
   try {
     validateUserForm(user);
 
-    const result = await fetch("http://localhost:8080/api/sessions/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
+    const result = await axios.post(
+      "http://localhost:8080/api/sessions/login",
+      user
+    );
+
+    Cookies.set("token", result.data.message.token, { expires: 7 });
+    Cookies.set("user", JSON.stringify(result.data.message.user), {
+      expires: 7,
     });
-
-    const resultJson = await result.json();
-
-    if (result) {
-      localStorage.setItem("user", JSON.stringify(resultJson.message));
-      location.replace("http://localhost:8080/products");
-    }
+    location.href = "http://localhost:8080/";
   } catch (err) {
-    console.log(err);
-    // alert(`ERROR: ${err}`);
+    if (err.response) {
+      alert(`${err.response.data.Error}`);
+    } else {
+      alert(err);
+    }
   }
 }
 
 function validateUserForm(user) {
   if (!user.email || !user.password) {
-    throw new Error("Formulario incompleto");
+    throw new Error("Form incomplete");
   }
 }

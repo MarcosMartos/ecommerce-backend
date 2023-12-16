@@ -1,35 +1,79 @@
-let products = [];
-let error = "";
+const added = document.getElementById("added");
+const discounts = document.getElementById("discounts");
+const populars = document.getElementById("populars");
+const hero = document.getElementById("hero");
 
-const productsList = document.getElementById("productsList");
+hero.style.backgroundImage = "url('../assets/pexels-pixabay-159393.jpg')";
 
-async function getAllProducts(url = "http://localhost:8080/api/products") {
+let productsAdded = [];
+let productsDiscounts = [];
+let productsPopulars = [];
+
+async function getProducts(url, template) {
   try {
-    const response = await fetch(url);
-    const responseJson = await response.json();
+    const response = await axios.get(url);
 
-    products = [...responseJson.result.payload];
-
-    compileProducts();
+    compileProducts(response.data.message.rows, template);
   } catch (err) {
-    error = err;
+    if (err.response) {
+      alert(`${err.response.data.Error}`);
+    } else {
+      alert(err);
+    }
   }
 }
 
-function compileProducts() {
-  const productsTemplate = products
-    .map(
-      (product) => `<li>
-      <p>ID: ${product._id}</p> 
-      <p>Title: ${product.title}</p> 
-      <p>Description: ${product.description}</p> 
-      <p>Price: ${product.price}</p> 
-      <p>Code: ${product.code}</p> 
-      <p>Stock: ${product.stock}</p>
-    </li>`
-    )
-    .join(" ");
-  productsList.innerHTML = productsTemplate;
+function compileProducts(products, template) {
+  const productsTemplate = products.map(
+    (product) => `
+      <a href="http://localhost:8080/products/${product.id}">
+      <div class="flex flex-col justify-center items-center relative" style="width:200px;height:350px;" >
+      <div style="width:50px;height:50px;display:${
+        +product.discount ? "flex" : "none"
+      }" class="absolute bottom-[60px] right-[-10px] rounded-full bg-orange-600 items-center justify-center ">
+        <p class="text-md text-white secondary-font mb-1">-${
+          product.discount
+        }%</p> 
+      </div>
+      <img src="${
+        product.url_front_page
+      }" style="width:200px;height:270px;" class="rounded-t-lg"/>
+      <div class="rounded-b-lg bg-white p-2 flex flex-col justify-center items-center" style="width:200px;height:80px;">
+      <p class="text-center primary-font">${product.title}</p>
+      <span class="w-full flex gap-x-2 items-center justify-center">
+      <p class="${
+        product.discount
+          ? "line-through text-slate-500 text-sm secondary-font"
+          : "text-sm secondary-font"
+      }">${product.price} USD</p>
+      <p class="text-sm secondary-font">${
+        product.discount
+          ? (+product.price * (1 - +product.discount / 100)).toFixed(2) + " USD"
+          : ""
+      }</p>
+      </span>
+      </div>
+      <div/>
+      </a>
+      `
+  );
+
+  productsTemplate.forEach((productTemplate) => {
+    template.innerHTML = template.innerHTML + productTemplate;
+  });
 }
 
-getAllProducts();
+getProducts(
+  'http://localhost:8080/api/products?sort=createdAt&order=DESC&limit=5&filter=recent&filterValue={"endDate":"December 9, 2023", "startDate":"December 2, 2023"}',
+  added
+);
+
+getProducts(
+  "http://localhost:8080/api/products?sort=discount&order=DESC&limit=5",
+  discounts
+);
+
+getProducts(
+  'http://localhost:8080/api/products?sort=popularity&order=DESC&limit=5&filter=popularity&filterValue={"endDate":"December 9, 2023", "startDate":"December 2, 2023"}',
+  populars
+);

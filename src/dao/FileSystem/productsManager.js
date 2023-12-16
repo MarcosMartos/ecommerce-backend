@@ -1,157 +1,216 @@
 import fs from "fs";
 
-// Crear clase constructora ProductManager
 class ProductManager {
   constructor(path) {
     this.path = path;
   }
 
-  // Crear método getProducts
-  async getProducts(queryObj) {
-    const { limit } = queryObj;
+  async addProduct(newProduct) {
     try {
-      if (fs.existsSync(this.path)) {
-        const info = await fs.promises.readFile(this.path, "utf-8");
-        const infoParsed = JSON.parse(info);
+      const products = await this.getProducts();
 
-        // Comprobar si existe limit y si es menor a los productos del array
+      const repeatedCode = products.find(
+        (product) => product.code === newProduct.code
+      );
 
-        if (limit) {
-          if (limit > infoParsed.length) {
-            return -1;
-          } else {
-            const newProducts = infoParsed.splice(0, limit);
-            return newProducts;
-          }
-        } else {
-          return infoParsed;
-        }
-      } else {
-        return [];
+      if (repeatedCode) {
+        throw new Error("Producto no válido debido a código repetido");
       }
+
+      newProduct.id = products.length
+        ? products[products.length - 1].id + 1
+        : 1;
+
+      products.push(newProduct);
+
+      const result = await fs.promises
+        .writeFile(this.path, JSON.stringify(products))
+        .then(() => {
+          return "Producto agregado";
+        })
+        .catch((err) => {
+          throw new Error("No se pudo agregar el producto");
+        });
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProductsFromFile() {
+    try {
+      if (!fs.existsSync(this.path)) {
+        const products = [];
+
+        await fs.promises.writeFile(this.path, JSON.stringify(products));
+
+        return products;
+      }
+
+      const products = JSON.parse(await fs.promises.readFile(this.path));
+
+      return products;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProducts(limit) {
+    try {
+      const products = await this.getProductsFromFile();
+
+      return products.slice(0, limit);
     } catch (error) {
       return error;
     }
   }
 
-  // Crear método addProduct
-  async addProduct(obj) {
+  async getProductById(id) {
+    try {
+      const products = await this.getProducts();
+
+      const foundProduct = products.find((product) => product.id === +id);
+
+      if (foundProduct) {
+        return foundProduct;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateProductById(id, newProductInfo) {
     try {
       if (
-        obj.title &&
-        obj.description &&
-        obj.price &&
-        obj.code &&
-        obj.stock &&
-        obj.status &&
-        obj.category
+        newProductInfo.id ||
+        newProductInfo.code ||
+        newProductInfo.thumbnails
       ) {
-        // Llamar productos
-
-        const products = await this.getProducts({});
-        let id;
-
-        if (products.length) {
-          // Verificar que code sea único
-
-          if (products.some((p) => p.code === obj.code)) {
-            console.log("Ya existe un producto con este Codigo");
-          } else {
-            //Id único
-
-            id = products[products.length - 1].id + 1;
-
-            //Cargar producto al array
-
-            const newProduct = { id, ...obj };
-            products.push(newProduct);
-            await fs.promises.writeFile(this.path, JSON.stringify(products));
-            return newProduct;
-          }
-        } else {
-          //Id único
-
-          id = 1;
-
-          //Cargar producto al array
-
-          const newProduct = { id, ...obj };
-          products.push(newProduct);
-          await fs.promises.writeFile(this.path, JSON.stringify(products));
-          return newProduct;
-        }
-      } else {
-        console.log("Todos los campos son obligatorios");
+        throw new Error(
+          "No se pueden cambiar la identificación del producto, el código o thumbnails"
+        );
       }
+
+      let product = { ...(await this.getProductById(id)) };
+
+      const products = await this.getProducts();
+
+      let foundIndex = products.findIndex((_product) => _product.id === +id);
+
+      products[foundIndex] = {
+        ...product,
+        ...newProductInfo,
+      };
+
+      const result = await fs.promises
+        .writeFile(this.path, JSON.stringify(products))
+        .then(() => {
+          return "Producto actualizado";
+        })
+        .catch((err) => {
+          throw new Error("No se pudo actualizar el producto");
+        });
+
+      return result;
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 
-  // Crear método getProductById
-  async getProductById(idProduct) {
+  async deleteProductById(id) {
     try {
-      const products = await this.getProducts({});
-      const product = products.find((p) => p.id === idProduct);
-      return product;
+      const products = await this.getProducts();
+
+      await this.getProductById(id);
+
+      const index = products.findIndex((_product) => _product.id === +id);
+
+      products.splice(index, 1);
+
+      const result = await fs.promises
+        .writeFile(this.path, JSON.stringify(products))
+        .then(() => {
+          return "Producto eliminado";
+        })
+        .catch((err) => {
+          throw new Error("No se pudo eliminar el producto");
+        });
+
+      return result;
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 
-  // Crear método deleteProduct
-  async deleteProduct(idProduct) {
+  async addImageToProductById(id, imagePath) {
     try {
-      const products = await this.getProducts({});
-      const product = products.find((p) => p.id === idProduct);
-      if (!product) {
-        return -1;
-      }
+      let product = { ...(await this.getProductById(id)) };
 
-      const newArrayProducts = products.filter((p) => p.id !== idProduct);
-      await fs.promises.writeFile(this.path, JSON.stringify(newArrayProducts));
-      return 1;
+      const products = await this.getProducts();
+
+      let foundIndex = products.findIndex((_product) => _product.id === +id);
+
+      product.thumbnails.push({
+        idPhoto: product.thumbnails.length ? product.thumbnails.length : 1,
+        url: imagePath,
+      });
+
+      products[foundIndex] = {
+        ...product,
+      };
+
+      const result = await fs.promises
+        .writeFile(this.path, JSON.stringify(products))
+        .then(() => {
+          return "Imagen agregada";
+        })
+        .catch((err) => {
+          throw new Error("No se pudo agregar la imagen");
+        });
+
+      return result;
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 
-  // Crear método updateProduct
-
-  async updateProduct(idProduct, obj) {
+  async deleteImageOfProductById(idProduct, idImage) {
     try {
-      let products = await this.getProducts({});
-      let index = products.findIndex((p) => p.id === idProduct);
+      let product = { ...(await this.getProductById(idProduct)) };
 
-      if (index === -1) {
-        return -1;
-      }
+      const products = await this.getProducts();
 
-      let product = products.find((p) => p.id === idProduct);
-      if (product !== -1) {
-        product = {
-          id: idProduct,
-          title: obj.title ? obj.title : product.title,
-          description: obj.description ? obj.description : product.description,
-          price: obj.price ? obj.price : product.price,
-          thumbnail: obj.thumbnail ? obj.thumbnail : product.thumbnail,
-          code: obj.code ? obj.code : product.code,
-          stock: obj.stock ? obj.stock : product.stock,
-          category: obj.category ? obj.category : product.category,
-          status: obj.status ? obj.status : product.status,
-        };
-        products[index] = product;
-        await fs.promises.writeFile(this.path, JSON.stringify(products));
-        return 1;
-      } else {
-        return "No se encontro el producto";
-      }
+      let foundIndex = products.findIndex(
+        (_product) => _product.id === +idProduct
+      );
+
+      const imageIndex = product.thumbnails.findIndex(
+        (image) => image.idPhoto === +idImage
+      );
+
+      product.thumbnails.splice(imageIndex, 1);
+
+      products[foundIndex] = {
+        ...product,
+      };
+
+      const result = await fs.promises
+        .writeFile(this.path, JSON.stringify(products))
+        .then(() => {
+          return "Imagen eliminada";
+        })
+        .catch((err) => {
+          throw new Error("No se pudo eliminar la imagen");
+        });
+
+      return result;
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 }
 
-//************************************DESAFIO TRES********************************* */
-
-export const productsManager = new ProductManager("Products.json");
+export const productManager = new ProductManager("products.json");

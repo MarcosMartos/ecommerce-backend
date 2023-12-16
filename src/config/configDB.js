@@ -1,26 +1,25 @@
-import mongoose from "mongoose";
-import config from "./config.js";
+import { Sequelize } from "sequelize";
+import { errors } from "../utils/errorDictionary.js";
+import { config } from "./config.js";
 
-const URI = config.mongo_uri;
+export class Database {
+  static instanceDatabase;
 
-//config
-mongoose.set("strictQuery", true);
+  static getInstanceDatabase(database = Sequelize) {
+    if (!this.instanceDatabase) {
+      this.instanceDatabase = new database(config.mongo_uri);
+    }
 
-//methods
-/**
- * Establish connection with database with uri as enviroment variable DATABASE_URI
- * @throws {Error} - If cannot connects with database throws an error.
- */
-async function configDB() {
-  await mongoose
-    .connect(URI)
-    .then((res) => {
-      console.log("Conectado a DB");
-    })
-    .catch((err) => {
-      throw new Error(`La conexion fallo, ERROR: ${err.message}`);
-    });
+    return this.instanceDatabase;
+  }
+
+  static async databaseConnection() {
+    try {
+      await this.getInstanceDatabase().authenticate();
+      //await this.getInstanceDatabase().sync({alter:true});
+      console.log("Conectado a la base de datos satisfactoriamente");
+    } catch (error) {
+      throw new errors.DATABASE_CONNECTION_FAILED(error.message);
+    }
+  }
 }
-
-//exports
-export default configDB;
