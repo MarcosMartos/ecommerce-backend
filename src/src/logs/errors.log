@@ -1,0 +1,5 @@
+{
+  message: "Fallo al conectar a DB:  BLOB/TEXT column 'description' used in key specification without a key length",
+  level: 'fatal',
+  timestamp: '2024-01-05T15:04:53.065Z'
+}

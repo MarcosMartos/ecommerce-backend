@@ -32,7 +32,6 @@ router.get("/history", isAuthenticated, getHistoryBuysOfCurrentUser);
 router.get("/:cid", isAuthenticated, getCartById);
 
 router.get("/:cid/buy", isAuthenticated, buyCart);
-asi;
 
 router.get("/:cid/product/:pid", isAuthenticated, productAddedToCart);
 
